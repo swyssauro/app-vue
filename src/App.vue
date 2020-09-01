@@ -1,17 +1,48 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <NewLike />
+    <Header />
+    <QuestionBox
+    v-if="questions.length"
+    :currentQuestion="questions[index]"
+    :next="next"
+    />
   </div>
 </template>
 
 <script>
-import NewLike from './components/NewLike.vue'
+import Header from './components/Header.vue'
+import QuestionBox from './components/Questionbox.vue'
 
 export default {
   name: 'App',
   components: {
-    NewLike
+    Header,
+    QuestionBox
+  },
+
+  data() {
+    return {
+      questions: [],
+      index: 1
+    }
+  },
+
+  methods: {
+    next() {
+      this.index++
+    }
+  },
+
+  mounted: function() {
+    fetch('https://opentdb.com/api.php?amount=10&category=27&type=multiple', {
+      method: 'get'
+    })
+    .then((response) => {
+      return response.json()
+    })
+    .then((jsonData) => {
+      this.questions = jsonData.results
+    })
   }
 }
 </script>
@@ -23,6 +54,5 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
 }
 </style>
